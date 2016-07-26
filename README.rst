@@ -1,7 +1,7 @@
 SenML handling for Python
 *************************
 
-*Implements `draft-ietf-core-senml-02 <https://tools.ietf.org/html/draft-ietf-core-senml-02>`_*
+*Implements `draft-ietf-core-senml-02 <https://tools.ietf.org/html/draft-ietf-core-senml-02>`_ *
 
 A Python library for handling SenML data
 
@@ -32,4 +32,5 @@ Quick start
 External dependencies
 =====================
 
+- attrs - https://pypi.python.org/pypi/attrs
 - cbor - https://pypi.python.org/pypi/cbor (only required if using CBOR input/output)
