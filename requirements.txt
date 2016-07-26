@@ -1,0 +1,6 @@
+aiocoap>=0.2
+LinkHeader>=0.4.3
+blitzdb>=0.2.0
+six>=1.6.1
+aiohttp>=0.21
+attrs>=16.0.0

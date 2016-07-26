@@ -1,0 +1,5 @@
+[run]
+omit = tests/*
+branch = True
+[html]
+directory = coverage_report_html
