@@ -44,9 +44,9 @@ class SenMLMeasurement(object):
             elif 'vb' in data:
                 if str(data['vb']).casefold() == 'false'.casefold() or \
                     str(data['vb']).casefold() == '0'.casefold():
-                    val = False
+                    attrs['value'] = False
                 else:
-                    val = True
+                    attrs['value'] = True
             elif 'vd' in data:
                 attrs['value'] = bytes(data['vd'])
 
@@ -100,10 +100,8 @@ class SenMLDocument(object):
 
     measurement_factory = SenMLMeasurement
 
-    def __init__(self, base=None, measurements=None, *args, **kwargs):
+    def __init__(self, measurements=None, *args, **kwargs):
         """Constructor
-
-        @param[in] base  Base object
         """
         super().__init__(*args, **kwargs)
         self.measurements = measurements
