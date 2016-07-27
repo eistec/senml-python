@@ -26,3 +26,4 @@ __pycache__/
 .tox/
 *.egg-info
 /coverage_report_html/
+/docs/html/
