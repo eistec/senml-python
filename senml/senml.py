@@ -77,7 +77,7 @@ class SenMLMeasurement(object):
 
         return cls(**attrs)
 
-    def to_json(self, *, include_base=False):
+    def to_json(self):
         """Format the entry as a SenML+JSON object"""
         ret = {}
         if self.name is not None:
