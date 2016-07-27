@@ -28,5 +28,7 @@ pprint(js)
 s = senml.SenMLDocument.from_json(js)
 pprint(s.measurements)
 
+pprint([item.to_absolute(s.base) for item in s.measurements])
+
 print("json:")
 print("%r" % json.dumps(s.to_json(), sort_keys=True))

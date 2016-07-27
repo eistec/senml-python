@@ -15,11 +15,32 @@ class SenMLMeasurement(object):
     time = attr.ib(default=None)
     unit = attr.ib(default=None)
     value = attr.ib(default=None)
-    base = attr.ib(default=None)
     sum = attr.ib(default=None)
 
+    def to_absolute(self, base):
+        """Convert values to include the base information
+
+        Be aware that it is not possible to compute time average of the signal
+        without the base object since the base time and base value are still
+        needed for that use case."""
+        attrs = {
+            'name': (base.name or '') + (self.name or ''),
+            'time': (base.time or 0.0) + (self.time or 0.0),
+            'unit': self.unit or base.unit,
+            'sum':  self.sum,
+        }
+        if  isinstance(self.value, bool) or \
+            isinstance(self.value, bytes) or \
+            isinstance(self.value, str):
+            attrs['value'] = self.value
+        elif self.value is not None:
+            attrs['value'] = (base.value or 0.0) + (self.value or 0.0)
+
+        ret = self.__class__(**attrs)
+        return ret
+
     @classmethod
-    def from_base_dict(cls, data):
+    def base_from_json(cls, data):
         """Create a base instance from the given SenML data"""
         template = cls()
         attrs = {
@@ -31,18 +52,15 @@ class SenMLMeasurement(object):
         return cls(**attrs)
 
     @classmethod
-    def from_json(cls, data, base=None):
+    def from_json(cls, data):
         """Create an instance given JSON data as a dict"""
-        if base is None:
-            base = cls()
-
+        template = cls()
         attrs = {
-            'name':  data.get('n', None),
-            'time':  data.get('t', None),
-            'unit':  data.get('u', None),
-            'value': data.get('v', None),
-            'sum': data.get('s', None),
-            'base': base
+            'name':  data.get('n', template.name),
+            'time':  data.get('t', template.time),
+            'unit':  data.get('u', template.unit),
+            'value': data.get('v', template.value),
+            'sum':   data.get('s', template.sum),
         }
         if attrs['value'] is None:
             if 'vs' in data:
@@ -61,23 +79,7 @@ class SenMLMeasurement(object):
 
     def to_json(self, *, include_base=False):
         """Format the entry as a SenML+JSON object"""
-        base = self.base if self.base is not None else self.__class__()
         ret = {}
-        if include_base:
-            # Add SenML version
-            ret['bver'] = 5
-
-            if base.name is not None:
-                ret['bn'] = str(base.name)
-
-            if base.time is not None:
-                ret['bt'] = float(base.time)
-
-            if base.unit is not None:
-                ret['bu'] = str(base.unit)
-            if base.value is not None:
-                ret['bv'] = float(base.value)
-
         if self.name is not None:
             ret['n'] = str(self.name)
 
@@ -106,11 +108,12 @@ class SenMLDocument(object):
 
     measurement_factory = SenMLMeasurement
 
-    def __init__(self, measurements=None, *args, **kwargs):
+    def __init__(self, measurements=None, *args, base=None, **kwargs):
         """Constructor
         """
         super().__init__(*args, **kwargs)
         self.measurements = measurements
+        self.base = base
 
     @classmethod
     def from_json(cls, json_data):
@@ -120,9 +123,9 @@ class SenMLDocument(object):
         @param[in] json_data  JSON list, from json.loads(senmltext)
         """
         # Grab base information from first entry
-        base = cls.measurement_factory.from_base_dict(json_data[0])
+        base = cls.measurement_factory.base_from_json(json_data[0])
 
-        measurements = [cls.measurement_factory.from_json(item, base) for item in json_data]
+        measurements = [cls.measurement_factory.from_json(item) for item in json_data]
 
         obj = cls(base=base, measurements=measurements)
 
@@ -130,8 +133,23 @@ class SenMLDocument(object):
 
     def to_json(self):
         """Return a JSON dict"""
+        first = {
+            # Add SenML version
+            'bver': 5,
+        }
+        if self.base:
+            base = self.base
+            if base.name is not None:
+                first['bn'] = str(base.name)
+            if base.time is not None:
+                first['bt'] = float(base.time)
+            if base.unit is not None:
+                first['bu'] = str(base.unit)
+            if base.value is not None:
+                first['bv'] = float(base.value)
+
         if self.measurements:
-            first = self.measurements[0].to_json(include_base=True)
+            first.update(self.measurements[0].to_json())
             ret = [first]
             ret.extend([item.to_json() for item in self.measurements[1:]])
         else:
