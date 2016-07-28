@@ -6,7 +6,7 @@ import io
 import os
 import sys
 
-import soa
+import senml
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -44,8 +44,8 @@ class PyTest(TestCommand):
         sys.exit(errcode)
 
 setup(
-    name='soa',
-    version=soa.__version__,
+    name='senml',
+    version=senml.__version__,
     url='https://github.com/eistec/senml-python/',
     download_url='https://github.com/eistec/senml-python/archive/v0.1.0.tar.gz',
     license='Apache Software License',
