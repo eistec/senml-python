@@ -1,4 +1,5 @@
-"""SenML Python object representation"""
+"""@package senml.senml
+SenML Python object representation"""
 
 import attr
 try:
@@ -104,7 +105,7 @@ class SenMLMeasurement(object):
         return ret
 
 class SenMLDocument(object):
-    """A collection of SenMLMeasurements"""
+    """A collection of SenMLMeasurement data points"""
 
     measurement_factory = SenMLMeasurement
 
@@ -119,7 +120,6 @@ class SenMLDocument(object):
     def from_json(cls, json_data):
         """Parse a loaded SenML JSON representation into a SenMLDocument
 
-        @param[in] cls        this class
         @param[in] json_data  JSON list, from json.loads(senmltext)
         """
         # Grab base information from first entry

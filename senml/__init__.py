@@ -1,4 +1,7 @@
-"""This module provides a Python API for SenML handling"""
+"""@package senml
+Top-level namespace for the senml module
+"""
+
 #pylint: disable=too-few-public-methods
 
 from .senml import SenMLDocument, SenMLMeasurement
