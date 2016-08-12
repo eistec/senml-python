@@ -11,7 +11,8 @@ Development
 This code is released as open source, the main development repository is hosted
 on GitHub at https://github.com/eistec/senml-python
 
-For guidelines on contributing to the project, see `CONTRIBUTING <https://github.com/eistec/senml-python/blob/master/CONTRIBUTING.rst>`_
+For guidelines on contributing to the project, see
+`CONTRIBUTING <https://github.com/eistec/senml-python/blob/master/CONTRIBUTING.rst>`_
 
 Licensing
 =========
