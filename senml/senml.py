@@ -1,5 +1,8 @@
 """@package senml.senml
-SenML Python object representation"""
+SenML Python object representation
+
+@todo Add CBOR support
+"""
 
 import attr
 try:
