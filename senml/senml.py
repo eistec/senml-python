@@ -5,12 +5,12 @@ SenML Python object representation
 """
 
 import attr
-try:
-    import cbor
-except ImportError:
-    HAVE_CBOR = False
-else:
-    HAVE_CBOR = True
+#try:
+#    import cbor
+#except ImportError:
+#    HAVE_CBOR = False
+#else:
+#    HAVE_CBOR = True
 
 @attr.s
 class SenMLMeasurement(object):
