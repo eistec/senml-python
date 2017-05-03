@@ -33,9 +33,7 @@ class SenMLMeasurement(object):
             'unit': self.unit or base.unit,
             'sum':  self.sum,
         }
-        if  isinstance(self.value, bool) or \
-            isinstance(self.value, bytes) or \
-            isinstance(self.value, str):
+        if  isinstance(self.value, (bool, bytes, str)):
             attrs['value'] = self.value
         elif self.value is not None:
             attrs['value'] = (base.value or 0) + (self.value or 0)
@@ -61,12 +59,11 @@ class SenMLMeasurement(object):
     @staticmethod
     def numeric(val):
         """Convert val to int if the value does not have any decimals, else convert to float"""
-        if val is None or isinstance(val, float) or isinstance(val, int):
+        if val is None or isinstance(val, (float, int)):
             return val
         if float(val) == int(val):
             return int(val)
-        else:
-            return float(val)
+        return float(val)
 
     @classmethod
     def clean_attrs(cls, attrs):
