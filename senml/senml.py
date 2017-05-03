@@ -29,7 +29,7 @@ class SenMLMeasurement(object):
         needed for that use case."""
         attrs = {
             'name': (base.name or '') + (self.name or ''),
-            'time': (base.time or 0.0) + (self.time or 0.0),
+            'time': (base.time or 0) + (self.time or 0),
             'unit': self.unit or base.unit,
             'sum':  self.sum,
         }
@@ -38,7 +38,7 @@ class SenMLMeasurement(object):
             isinstance(self.value, str):
             attrs['value'] = self.value
         elif self.value is not None:
-            attrs['value'] = (base.value or 0.0) + (self.value or 0.0)
+            attrs['value'] = (base.value or 0) + (self.value or 0)
 
         ret = self.__class__(**attrs)
         return ret
@@ -54,6 +54,16 @@ class SenMLMeasurement(object):
             'value': data.get('bv', template.value),
         }
         return cls(**attrs)
+
+    @staticmethod
+    def numeric(val):
+        """Convert val to int if the value does not have any decimals, else convert to float"""
+        if val is None or isinstance(val, float) or isinstance(val, int):
+            return val
+        if float(val) == int(val):
+            return int(val)
+        else:
+            return float(val)
 
     @classmethod
     def from_json(cls, data):
@@ -88,13 +98,13 @@ class SenMLMeasurement(object):
             ret['n'] = str(self.name)
 
         if self.time is not None:
-            ret['t'] = float(self.time)
+            ret['t'] = self.numeric(self.time)
 
         if self.unit is not None:
             ret['u'] = str(self.unit)
 
         if self.sum is not None:
-            ret['s'] = float(self.sum)
+            ret['s'] = self.numeric(self.sum)
 
         if isinstance(self.value, bool):
             ret['vb'] = self.value
@@ -103,7 +113,7 @@ class SenMLMeasurement(object):
         elif isinstance(self.value, str):
             ret['vs'] = self.value
         elif self.value is not None:
-            ret['v'] = float(self.value)
+            ret['v'] = self.numeric(self.value)
 
         return ret
 
