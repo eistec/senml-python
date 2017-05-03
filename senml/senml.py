@@ -53,6 +53,9 @@ class SenMLMeasurement(object):
             'unit':  data.get('bu', template.unit),
             'value': data.get('bv', template.value),
         }
+        # Convert to numeric types
+        cls.clean_attrs(attrs)
+
         return cls(**attrs)
 
     @staticmethod
@@ -66,6 +69,16 @@ class SenMLMeasurement(object):
             return float(val)
 
     @classmethod
+    def clean_attrs(cls, attrs):
+        """Clean broken SenML+JSON with strings where there are supposed to be numbers"""
+        # This fixes common typing errors such as:
+        # [{"bn":"asdf","bt":"1491918634"}]
+        # (where the value for bt: is supposed to be a numeric type, not a string)
+        for key in ('time', 'sum', 'value'):
+            val = attrs.get(key, None)
+            attrs[key] = cls.numeric(val)
+
+    @classmethod
     def from_json(cls, data):
         """Create an instance given JSON data as a dict"""
         template = cls()
@@ -76,6 +89,9 @@ class SenMLMeasurement(object):
             'value': data.get('v', template.value),
             'sum':   data.get('s', template.sum),
         }
+        # Convert to numeric types
+        cls.clean_attrs(attrs)
+
         if attrs['value'] is None:
             if 'vs' in data:
                 attrs['value'] = str(data['vs'])
